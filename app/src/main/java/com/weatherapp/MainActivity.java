@@ -23,17 +23,24 @@ import com.weatherapp.service.WeatherDataRequester;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import lombok.Getter;
 
-@Getter
-public class MainActivity extends AppCompatActivity {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Executor executor = Executors.newSingleThreadExecutor();
 
+public class MainActivity extends AppCompatActivity {
+    private ObjectMapper objectMapper;
     private EditText enterCityField;
     private Button actionButton;
-    private TextView weatherInfoHead;
     private TextView weatherInfoBody;
+    private WeatherDataRequester weatherDataRequester;
+
+    {
+        objectMapper = new ObjectMapper();
+        weatherDataRequester = new WeatherDataRequester(enterCityField, actionButton, weatherInfoBody, objectMapper);
+        enterCityField = findViewById(R.id.enter_city_field);
+        actionButton = findViewById(R.id.action_button);
+        weatherInfoBody = findViewById(R.id.weather_info_body);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +54,9 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        enterCityField = findViewById(R.id.enter_city_field);
-        actionButton = findViewById(R.id.action_button);
-        weatherInfoHead = findViewById(R.id.weather_info_head);
-        weatherInfoBody = findViewById(R.id.weather_info_body);
+//        enterCityField = findViewById(R.id.enter_city_field);
+//        actionButton = findViewById(R.id.action_button);
+//        weatherInfoBody = findViewById(R.id.weather_info_body);
 
         actionButton.setOnClickListener(view -> {
             if (enterCityField.getText().toString().trim().isBlank()) {
@@ -61,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
                 String cityCoordUri = buildUri(CITY_COORD_URI_TEMPLATE, city, LIMIT, WEATHER_API_KEY);
 
-                new WeatherDataRequester(enterCityField, actionButton, weatherInfoHead, weatherInfoBody, objectMapper).execute(cityCoordUri);
+//                new WeatherDataRequester(enterCityField, actionButton, weatherInfoBody).execute(cityCoordUri);
+                weatherDataRequester.execute(cityCoordUri);
             }
         });
     }

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -45,4 +46,9 @@ dependencies {
 
     // Lombok
     implementation("org.projectlombok:lombok:1.18.36")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    annotationProcessor("com.google.dagger:hilt-android-compiler:2.51.1")
+
 }

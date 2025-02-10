@@ -25,18 +25,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 @SuppressLint("StaticFieldLeak")
 public class WeatherDataRequester extends AsyncTask<String, String, String> {
     private final EditText enterCityField;
     private final Button actionButton;
-    private final TextView weatherInfoHead;
     private final TextView weatherInfoBody;
     private final ObjectMapper objectMapper;
 
-    public WeatherDataRequester(EditText enterCityField, Button actionButton, TextView weatherInfoHead, TextView weatherInfoBody, ObjectMapper objectMapper) {
+    public WeatherDataRequester(EditText enterCityField, Button actionButton, TextView weatherInfoBody, ObjectMapper objectMapper) {
         this.enterCityField = enterCityField;
         this.actionButton = actionButton;
-        this.weatherInfoHead = weatherInfoHead;
         this.weatherInfoBody = weatherInfoBody;
         this.objectMapper = objectMapper;
     }
