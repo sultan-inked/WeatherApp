@@ -40,4 +40,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation("org.projectlombok:lombok:1.18.36")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
 }

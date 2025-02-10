@@ -8,7 +8,6 @@
     android:background="@color/nativeGray"
     tools:context=".MainActivity">
 
-
     <TextView
         android:id="@+id/logo"
         android:layout_width="match_parent"
@@ -18,5 +17,63 @@
         android:layout_marginTop="50sp"
         android:textAlignment="center"
         android:textColor="@color/textColor"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        />
+
+    <EditText
+        android:id="@+id/enter_city_field"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:autofillHints="50dp"
+        android:ems="10"
+        android:layout_below="@+id/logo"
+        android:layout_marginTop="400sp"
+        android:layout_marginHorizontal="50sp"
+        android:backgroundTint="@color/colorAccent"
+        android:inputType="textPersonName"
+        android:textColor="@color/textColor"
+        android:textColorHint="@color/textColorHint"
+        android:hint="@string/hint_user_field"
+        android:fontFamily="@font/montserrat_bold"
+        />
+    
+    <Button
+        android:id="@+id/action_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/enter_city_field"
+        android:layout_marginStart="100sp"
+        android:layout_marginEnd="100sp"
+        android:text="@string/action_button"
+        android:textColor="@color/textColor"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="25sp"
+        />
+
+    <TextView
+        android:id="@+id/weather_info_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:fontFamily="@font/montserrat_bold"
+
+        android:layout_marginTop="50sp"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/weather_info_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weather_info_head"
+        android:fontFamily="@font/montserrat_bold"
+
+        android:layout_marginTop="50sp"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
+        />
+
 </RelativeLayout>

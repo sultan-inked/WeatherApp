@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="logo">Weather in your city</string>
+    <string name="logo">Weather App</string>
+    <string name="hint_user_field">Enter city name</string>
+    <string name="action_button">Search</string>
+    <string name="weather_info_head">Weather in your city</string>
+    <string name="no_city_name_for_search">City name missing</string>
+    <string name="waiting_for_load_weather_info">Load weather information</string>
 </resources>

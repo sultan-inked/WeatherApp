@@ -6,4 +6,5 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="nativeGray">#333</color>
     <color name="textColor">#fff</color>
+    <color name="textColorHint">#ccc</color>
 </resources>
