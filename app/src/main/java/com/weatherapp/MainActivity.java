@@ -1,6 +1,10 @@
 package com.weatherapp;
 
-import android.os.AsyncTask;
+import static com.weatherapp.util.Properties.CITY_COORD_URI_TEMPLATE;
+import static com.weatherapp.util.Properties.LIMIT;
+import static com.weatherapp.util.Properties.WEATHER_API_KEY;
+import static com.weatherapp.util.UriBuilder.buildUri;
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,17 +17,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weatherapp.dto.city.CityCoordResponseDto;
-import com.weatherapp.dto.weather.WeatherInfoResponseDto;
+import com.weatherapp.service.WeatherDataRequester;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -31,13 +27,6 @@ import lombok.Getter;
 
 @Getter
 public class MainActivity extends AppCompatActivity {
-    private static final String WEATHER_API_KEY = "ce5250f440f47fdbd0936be22ee677d4";
-    private static final int LIMIT = 1;
-    private static final String UNITS = "metric";
-    private static final String LANG = "ru";
-    private static final String CITY_COORD_URI_TEMPLATE = "https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=%s&appid=%s";
-    private static final String WEATHER_BI_COORDINATED_URI_TEMPLATE = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=%s&lang=%s";
-
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Executor executor = Executors.newSingleThreadExecutor();
 
@@ -45,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private Button actionButton;
     private TextView weatherInfoHead;
     private TextView weatherInfoBody;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,90 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
                 String cityCoordUri = buildUri(CITY_COORD_URI_TEMPLATE, city, LIMIT, WEATHER_API_KEY);
 
-                new GetURIData().execute(cityCoordUri);
+                new WeatherDataRequester(enterCityField, actionButton, weatherInfoHead, weatherInfoBody, objectMapper).execute(cityCoordUri);
             }
         });
-    }
-
-    private String buildUri(String template, Object... args) {
-        return String.format(template, args);
-    }
-
-    class GetURIData extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-            weatherInfoBody.setText(R.string.waiting_for_load_weather_info);
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-
-            try {
-                URL cityCoordUrl = new URL(strings[0]);
-                connection = (HttpURLConnection) cityCoordUrl.openConnection();
-                connection.connect();
-
-                InputStream cityCoordStream = connection.getInputStream();
-
-                List<CityCoordResponseDto> cityCoordDtoList = objectMapper.readValue(cityCoordStream,
-                        new TypeReference<>() {});
-
-                if (cityCoordDtoList.isEmpty()) {
-                    return "City with name: \n\"" + enterCityField.getText().toString() + "\"\n not found";
-                }
-
-                CityCoordResponseDto cityCoordDto = cityCoordDtoList.get(0);
-
-                Double lat = cityCoordDto.lat;
-                Double lon = cityCoordDto.lon;
-
-                String weatherUri = buildUri(WEATHER_BI_COORDINATED_URI_TEMPLATE, lat, lon,
-                        WEATHER_API_KEY, UNITS, LANG);
-
-                URL url = new URL(weatherUri);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                InputStream stream = connection.getInputStream();
-
-                WeatherInfoResponseDto responseDto = objectMapper.readValue(stream, WeatherInfoResponseDto.class);
-
-                 String description = responseDto.weather.get(0).description;
-                 Double temperature = responseDto.main.temp;
-                 Double fellsLike = responseDto.main.feels_like;
-                 Double tempMin = responseDto.main.temp_min;
-                 Double tempMax = responseDto.main.temp_max;
-                return "description: " + description +
-                        "\n temperature: " + temperature +
-                        "\n fells like: " + fellsLike +
-                        "\n temp min: " + tempMin +
-                        "\n temp max: " + tempMax;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            return "";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            weatherInfoBody.setText(result);
-        }
     }
 }

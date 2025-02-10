@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -41,6 +40,9 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    implementation("org.projectlombok:lombok:1.18.36")
+    // Jackson
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+
+    // Lombok
+    implementation("org.projectlombok:lombok:1.18.36")
 }
