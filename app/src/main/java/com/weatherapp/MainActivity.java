@@ -17,15 +17,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weatherapp.dto.city.CityCoordResponseDto;
-import com.weatherapp.dto.weather.WeatherInfoBody;
 import com.weatherapp.dto.weather.WeatherInfoResponseDto;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -74,13 +71,8 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 } else {
                     String city = enterCityField.getText().toString();
-//                    Double lat = 0.0d;
-//                    Double lon = 0.0d;
-//                    String units = "";
-//                    String language = "";
+
                     String cityCoordUri = buildUri(CITY_COORD_URI_TEMPLATE, city, LIMIT, WEATHER_API_KEY);
-//                    String weatherUri = buildUri(WEATHER_BI_COORDINATED_URI_TEMPLATE, lat, lon,
-//                            WEATHER_API_KEY, units, language);
 
                     new GetURIData().execute(cityCoordUri);
                 }
@@ -109,15 +101,14 @@ public class MainActivity extends AppCompatActivity {
                 connection.connect();
 
                 InputStream cityCoordStream = connection.getInputStream();
-//                reader = new BufferedReader(new InputStreamReader(stream));
+
                 List<CityCoordResponseDto> cityCoordDtoList = objectMapper.readValue(cityCoordStream,
                         new TypeReference<List<CityCoordResponseDto>>() {});
                 CityCoordResponseDto cityCoordDto = cityCoordDtoList.get(0);
 
                 Double lat = cityCoordDto.lat;
                 Double lon = cityCoordDto.lon;
-                String units = "";
-                String language = "";
+
                 String weatherUri = buildUri(WEATHER_BI_COORDINATED_URI_TEMPLATE, lat, lon,
                         WEATHER_API_KEY, UNITS, LANG);
 
@@ -126,23 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 connection.connect();
 
                 InputStream stream = connection.getInputStream();
-//                reader = new BufferedReader(new InputStreamReader(stream));
+
                 WeatherInfoResponseDto responseDto = objectMapper.readValue(stream, WeatherInfoResponseDto.class);
 
-//                WeatherInfoBody body = WeatherInfoBody.builder()
-//                        .description(responseDto.weather.get(0).description)
-//                        .temperature(responseDto.main.temp)
-//                        .fellsLike(responseDto.main.feels_like)
-//                        .tempMin(responseDto.main.temp_min)
-//                        .tempMax(responseDto.main.temp_max)
-//                        .build();
-//
-//                return body.toString();
-//                return new WeatherInfoBody(responseDto.weather.get(0).description,
-//                        responseDto.main.temp,
-//                        responseDto.main.feels_like,
-//                        responseDto.main.temp_min,
-//                        responseDto.main.temp_max).toString();
                  String description = responseDto.weather.get(0).description;
                  Double temperature = responseDto.main.temp;
                  Double fellsLike = responseDto.main.feels_like;
