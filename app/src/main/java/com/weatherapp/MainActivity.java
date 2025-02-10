@@ -20,15 +20,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weatherapp.service.WeatherDataRequester;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-import lombok.Getter;
-
-@Getter
 public class MainActivity extends AppCompatActivity {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Executor executor = Executors.newSingleThreadExecutor();
 
     private EditText enterCityField;
     private Button actionButton;
@@ -52,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         weatherInfoHead = findViewById(R.id.weather_info_head);
         weatherInfoBody = findViewById(R.id.weather_info_body);
 
+
         actionButton.setOnClickListener(view -> {
             if (enterCityField.getText().toString().trim().isBlank()) {
                 Toast.makeText(MainActivity.this, R.string.no_city_name_for_search,
@@ -61,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
                 String cityCoordUri = buildUri(CITY_COORD_URI_TEMPLATE, city, LIMIT, WEATHER_API_KEY);
 
-                new WeatherDataRequester(enterCityField, actionButton, weatherInfoHead, weatherInfoBody, objectMapper).execute(cityCoordUri);
+                new WeatherDataRequester(objectMapper, enterCityField, actionButton, weatherInfoHead,
+                        weatherInfoBody, city).execute(cityCoordUri);
             }
         });
     }

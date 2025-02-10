@@ -27,7 +27,7 @@
         android:autofillHints="50dp"
         android:ems="10"
         android:layout_below="@+id/logo"
-        android:layout_marginTop="400sp"
+        android:layout_marginTop="250sp"
         android:layout_marginHorizontal="50sp"
         android:backgroundTint="@color/colorAccent"
         android:inputType="textPersonName"
@@ -57,7 +57,7 @@
         android:layout_below="@+id/logo"
         android:fontFamily="@font/montserrat_bold"
 
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="5sp"
         android:textAlignment="center"
         android:textColor="@color/textColor"
         android:textSize="20sp"
@@ -70,7 +70,7 @@
         android:layout_below="@+id/weather_info_head"
         android:fontFamily="@font/montserrat_bold"
 
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="5sp"
         android:textAlignment="center"
         android:textColor="@color/textColor"
         android:textSize="20sp"

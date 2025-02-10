@@ -27,22 +27,25 @@ import java.util.List;
 
 @SuppressLint("StaticFieldLeak")
 public class WeatherDataRequester extends AsyncTask<String, String, String> {
+    private final ObjectMapper objectMapper;
     private final EditText enterCityField;
     private final Button actionButton;
     private final TextView weatherInfoHead;
     private final TextView weatherInfoBody;
-    private final ObjectMapper objectMapper;
+    private final String city;
 
-    public WeatherDataRequester(EditText enterCityField, Button actionButton, TextView weatherInfoHead, TextView weatherInfoBody, ObjectMapper objectMapper) {
+    public WeatherDataRequester( ObjectMapper objectMapper, EditText enterCityField, Button actionButton, TextView weatherInfoHead, TextView weatherInfoBody, String city) {
+        this.objectMapper = objectMapper;
         this.enterCityField = enterCityField;
         this.actionButton = actionButton;
         this.weatherInfoHead = weatherInfoHead;
         this.weatherInfoBody = weatherInfoBody;
-        this.objectMapper = objectMapper;
+        this.city = city;
     }
 
     protected void onPreExecute() {
         super.onPreExecute();
+        weatherInfoHead.setText(city);
         weatherInfoBody.setText(R.string.waiting_for_load_weather_info);
     }
 
@@ -62,10 +65,13 @@ public class WeatherDataRequester extends AsyncTask<String, String, String> {
                     new TypeReference<>() {});
 
             if (cityCoordDtoList.isEmpty()) {
-                return "City with name: \n\"" + enterCityField.getText().toString() + "\"\n not found";
+                weatherInfoHead.setText("=(");
+                return "City with the name: \n\"" + enterCityField.getText().toString() + "\"\n not found";
             }
 
             CityCoordResponseDto cityCoordDto = cityCoordDtoList.get(0);
+
+            weatherInfoHead.setText(cityCoordDto.name);
 
             Double lat = cityCoordDto.lat;
             Double lon = cityCoordDto.lon;
@@ -107,11 +113,16 @@ public class WeatherDataRequester extends AsyncTask<String, String, String> {
         Double fellsLike = response.main.feels_like;
         Double tempMin = response.main.temp_min;
         Double tempMax = response.main.temp_max;
+        Double lon = response.coord.lon;
+        Double lat = response.coord.lat;
+
         return "description: " + description +
                 "\n temperature: " + temperature +
                 "\n fells like: " + fellsLike +
                 "\n temp min: " + tempMin +
-                "\n temp max: " + tempMax;
+                "\n temp max: " + tempMax +
+                "\n lon: " + lon +
+                "\n lat: " + lat;
     }
 
     @Override
