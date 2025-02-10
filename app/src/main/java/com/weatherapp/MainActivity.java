@@ -2,7 +2,6 @@ package com.weatherapp;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,13 +37,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String LANG = "ru";
     private static final String CITY_COORD_URI_TEMPLATE = "https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=%s&appid=%s";
     private static final String WEATHER_BI_COORDINATED_URI_TEMPLATE = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=%s&lang=%s";
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Executor executor = Executors.newSingleThreadExecutor();
+
     private EditText enterCityField;
     private Button actionButton;
     private TextView weatherInfoHead;
     private TextView weatherInfoBody;
-    private ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +64,16 @@ public class MainActivity extends AppCompatActivity {
         weatherInfoHead = findViewById(R.id.weather_info_head);
         weatherInfoBody = findViewById(R.id.weather_info_body);
 
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (enterCityField.getText().toString().trim().isBlank()) {
-                    Toast.makeText(MainActivity.this, R.string.no_city_name_for_search,
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    String city = enterCityField.getText().toString();
+        actionButton.setOnClickListener(view -> {
+            if (enterCityField.getText().toString().trim().isBlank()) {
+                Toast.makeText(MainActivity.this, R.string.no_city_name_for_search,
+                        Toast.LENGTH_LONG).show();
+            } else {
+                String city = enterCityField.getText().toString();
 
-                    String cityCoordUri = buildUri(CITY_COORD_URI_TEMPLATE, city, LIMIT, WEATHER_API_KEY);
+                String cityCoordUri = buildUri(CITY_COORD_URI_TEMPLATE, city, LIMIT, WEATHER_API_KEY);
 
-                    new GetURIData().execute(cityCoordUri);
-                }
+                new GetURIData().execute(cityCoordUri);
             }
         });
     }
@@ -103,7 +101,12 @@ public class MainActivity extends AppCompatActivity {
                 InputStream cityCoordStream = connection.getInputStream();
 
                 List<CityCoordResponseDto> cityCoordDtoList = objectMapper.readValue(cityCoordStream,
-                        new TypeReference<List<CityCoordResponseDto>>() {});
+                        new TypeReference<>() {});
+
+                if (cityCoordDtoList.isEmpty()) {
+                    return "City with name: \n\"" + enterCityField.getText().toString() + "\"\n not found";
+                }
+
                 CityCoordResponseDto cityCoordDto = cityCoordDtoList.get(0);
 
                 Double lat = cityCoordDto.lat;
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                         "\n temp min: " + tempMin +
                         "\n temp max: " + tempMax;
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 if (connection != null) {
