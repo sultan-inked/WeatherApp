@@ -14,8 +14,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weatherapp.dto.city.CityCoordResponseDto;
+import com.weatherapp.dto.weather.WeatherInfoBody;
 import com.weatherapp.dto.weather.WeatherInfoResponseDto;
 
 import java.io.BufferedReader;
@@ -25,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -107,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
                 InputStream cityCoordStream = connection.getInputStream();
 //                reader = new BufferedReader(new InputStreamReader(stream));
-                CityCoordResponseDto cityCoordDto = objectMapper.readValue(cityCoordStream, CityCoordResponseDto.class);
+                List<CityCoordResponseDto> cityCoordDtoList = objectMapper.readValue(cityCoordStream,
+                        new TypeReference<List<CityCoordResponseDto>>() {});
+                CityCoordResponseDto cityCoordDto = cityCoordDtoList.get(0);
 
                 Double lat = cityCoordDto.lat;
                 Double lon = cityCoordDto.lon;
@@ -124,7 +129,30 @@ public class MainActivity extends AppCompatActivity {
 //                reader = new BufferedReader(new InputStreamReader(stream));
                 WeatherInfoResponseDto responseDto = objectMapper.readValue(stream, WeatherInfoResponseDto.class);
 
-                return responseDto.toString();
+//                WeatherInfoBody body = WeatherInfoBody.builder()
+//                        .description(responseDto.weather.get(0).description)
+//                        .temperature(responseDto.main.temp)
+//                        .fellsLike(responseDto.main.feels_like)
+//                        .tempMin(responseDto.main.temp_min)
+//                        .tempMax(responseDto.main.temp_max)
+//                        .build();
+//
+//                return body.toString();
+//                return new WeatherInfoBody(responseDto.weather.get(0).description,
+//                        responseDto.main.temp,
+//                        responseDto.main.feels_like,
+//                        responseDto.main.temp_min,
+//                        responseDto.main.temp_max).toString();
+                 String description = responseDto.weather.get(0).description;
+                 Double temperature = responseDto.main.temp;
+                 Double fellsLike = responseDto.main.feels_like;
+                 Double tempMin = responseDto.main.temp_min;
+                 Double tempMax = responseDto.main.temp_max;
+                return "description: " + description +
+                        "\n temperature: " + temperature +
+                        "\n fells like: " + fellsLike +
+                        "\n temp min: " + tempMin +
+                        "\n temp max: " + tempMax;
 
             } catch (IOException e) {
                 e.printStackTrace();
